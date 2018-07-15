@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">文字图片</string>
+    <integer name="pos">1</integer>
+</resources>
