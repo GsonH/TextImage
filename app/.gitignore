@@ -1,1 +1,10 @@
 /build
+.gradle/
+/local.properties
+.idea/
+.DS_Store
+build/
+captures/
+*.class
+*.iml
+*.pyc
