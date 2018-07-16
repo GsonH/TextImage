@@ -21,7 +21,7 @@ class AboutActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about)
         toolbar.title = "关于"
-        version.text = "图片文字 v" + getVersionName(context = this) +" 版权所有@copyRight.2018 "
+        version.text = "图片文字 v" + getVersionName(context = this) +" 版权所有@CopyRight.2018 "
         toolbar.setNavigationOnClickListener {
             finish()
         }

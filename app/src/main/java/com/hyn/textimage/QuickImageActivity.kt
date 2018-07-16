@@ -1,32 +1,32 @@
 package com.hyn.textimage
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
-import android.os.Bundle
-import com.luck.picture.lib.PictureSelector
-import com.luck.picture.lib.config.PictureConfig
-import com.luck.picture.lib.config.PictureMimeType
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.Toolbar
+import android.view.Menu
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.hyn.textimage.fragment.PropertiesBSFragment
 import com.hyn.textimage.fragment.TextEditorDialogFragment
+import com.luck.picture.lib.PictureSelector
+import com.luck.picture.lib.config.PictureConfig
+import com.luck.picture.lib.config.PictureMimeType
 import com.luck.picture.lib.entity.LocalMedia
-import ja.burhanrashid52.photoeditor.PhotoEditorView
+import com.yalantis.ucrop.UCrop
 import ja.burhanrashid52.photoeditor.PhotoEditor
-import android.widget.Toast
-import android.os.Environment
-import android.support.v4.content.ContextCompat
-import android.view.Menu
-import android.view.MenuItem
+import ja.burhanrashid52.photoeditor.PhotoEditorView
 import kotlinx.android.synthetic.main.activity_quick_image.*
 import java.io.File
 import java.lang.Exception
@@ -35,11 +35,14 @@ import java.lang.Exception
 open class QuickImageActivity : BaseActivity(), View.OnClickListener, PropertiesBSFragment.Properties {
 
     companion object {
+        val CROP_SMALL_PICTURE = 1
+
         fun createIntent(context: Context): Intent {
             return Intent(context, QuickImageActivity::class.java)
         }
     }
 
+    var cropFile: String? = null
     val editLayout: LinearLayout by lazy { findViewById<LinearLayout>(R.id.edit_layout) }
     val bruch: ImageView by lazy { findViewById<ImageView>(R.id.bruch) }
     val box: ImageView by lazy { findViewById<ImageView>(R.id.box) }
@@ -55,7 +58,7 @@ open class QuickImageActivity : BaseActivity(), View.OnClickListener, Properties
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quick_image)
-        createToolbar()
+        createToolbar(itemListener)
 
         initEdit()
         bruch.setOnClickListener(this)
@@ -63,6 +66,7 @@ open class QuickImageActivity : BaseActivity(), View.OnClickListener, Properties
         font.setOnClickListener(this)
         imgUndo.setOnClickListener(this)
         imgRedo.setOnClickListener(this)
+        cutting.setOnClickListener(this)
         propertyFragment = PropertiesBSFragment()
         propertyFragment.setPropertiesChangeListener(this)
         photoEditor = PhotoEditor.Builder(this, photoEditorView)
@@ -100,29 +104,13 @@ open class QuickImageActivity : BaseActivity(), View.OnClickListener, Properties
 
     }
 
-    fun createToolbar() {
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        toolbar.title = "图片编辑"
-        toolbar.setNavigationOnClickListener {
-            finish()
-        }
-        //左边的小箭头（注意需要在setSupportActionBar(toolbar)之后才有效果）
-        //设置toolbar
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        //参数为菜单资源id
-        toolbar.setOnMenuItemClickListener(itemListener)
-
-    }
-
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.toolmenu, menu)
         return true
     }
 
     private val itemListener = Toolbar.OnMenuItemClickListener {
-        if(it.itemId == R.id.toolbar_save) {
+        if (it.itemId == R.id.toolbar_save) {
             imageSave(toolbar)
             true
         }
@@ -130,12 +118,14 @@ open class QuickImageActivity : BaseActivity(), View.OnClickListener, Properties
     }
 
 
+    @SuppressLint("MissingPermission")
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.bruch -> {
                 photoEditor.setBrushDrawingMode(true)
+                propertyFragment.setCurrentColor(photoEditor.brushColor)
                 propertyFragment.show(supportFragmentManager, "bruch")
-                refrechTab(0)
+                refrechTab(v.id)
             }
             R.id.font -> {
                 val textEditorDialogFragment = TextEditorDialogFragment.show(this)
@@ -145,11 +135,11 @@ open class QuickImageActivity : BaseActivity(), View.OnClickListener, Properties
                         photoEditor.addText(inputText, colorCode)
                     }
                 })
-                refrechTab(1)
+                refrechTab(v.id)
             }
             R.id.box -> {
                 photoEditor.brushEraser()
-                refrechTab(2)
+                refrechTab(v.id)
             }
 
             R.id.imgUndo -> {
@@ -160,18 +150,36 @@ open class QuickImageActivity : BaseActivity(), View.OnClickListener, Properties
                 photoEditor.redo()
             }
 
+            R.id.cutting -> {
+                val file = File(application.externalCacheDir.path
+                        + File.separator +
+                        +System.currentTimeMillis() + ".png")
+                photoEditor.saveAsFile(file.path, object : PhotoEditor.OnSaveListener {
+                    override fun onSuccess(imagePath: String) {
+                        startCropImage(imagePath, photoEditorView.width, photoEditorView.height)
+                    }
+
+                    override fun onFailure(exception: Exception) {
+                        Toast.makeText(v.context, "未知错误,无法裁剪图片", Toast.LENGTH_SHORT).show()
+                    }
+                })
+                refrechTab(v.id)
+            }
+
         }
     }
 
     @SuppressLint("MissingPermission")
-    fun imageSave(v : View) {
+    fun imageSave(v: View) {
         val builder = AlertDialog.Builder(this)
         builder.setMessage("确认保存图片？")//提示内容
         builder.setPositiveButton("确定") { dialog, which ->
-            val file = File(Environment.getExternalStorageDirectory().toString()
-                    + File.separator + "文字图片"
-                    + System.currentTimeMillis() + ".png")
-            photoEditor.saveAsFile(file.path, object : PhotoEditor.OnSaveListener {
+            val childFile = File(ImageUtil.IMAGE_PATH, System.currentTimeMillis().toString() + ".png")
+            if(!childFile.exists()) {
+                childFile.parentFile.mkdirs()
+                childFile.createNewFile()
+            }
+            photoEditor.saveAsFile(childFile.path, object : PhotoEditor.OnSaveListener {
                 override fun onSuccess(imagePath: String) {
                     Toast.makeText(v.context, "已成功保存至手机SD卡", Toast.LENGTH_SHORT).show()
 
@@ -226,9 +234,39 @@ open class QuickImageActivity : BaseActivity(), View.OnClickListener, Properties
                         finish()
                     }
                 }
+
+                CROP_SMALL_PICTURE -> {
+                    if (data != null) {
+                        setImageToView(data) // 让刚才选择裁剪得到的图片显示在界面上
+                    }
+                }
+
+                UCrop.REQUEST_CROP -> {
+                    val resultUri = UCrop.getOutput(data!!)
+                    Glide.with(photoEditorView.source).asBitmap().load(resultUri)
+                            .into(object : SimpleTarget<Bitmap>(photoEditorView.width, photoEditorView.height) {
+                                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                    photoEditorView.source.setImageBitmap(resource)
+                                    val file = File(resultUri?.path)
+                                    if (file.exists()) {
+                                        file.delete()
+                                    }
+                                }
+                            })
+                }
             }
         } else {
-            finish()
+            if (UCrop.REQUEST_CROP != requestCode) {
+                finish()
+            } else {
+                cropFile?.let {
+                    val file = File(cropFile)
+                    if (file.exists()) {
+                        file.delete()
+                    }
+                }
+            }
+
         }
     }
 
@@ -240,17 +278,14 @@ open class QuickImageActivity : BaseActivity(), View.OnClickListener, Properties
 
         //loading font from assest
 //        val mEmojiTypeFace = Typeface.createFromAsset(assets, "emojione-android.ttf")
-
-        if (selectMedia != null) {
-            photoEditorView.post {
-                Glide.with(photoEditorView.source).asBitmap().load(if (selectMedia.isCompressed)
-                    selectMedia.compressPath else selectMedia.path)
-                        .into(object : SimpleTarget<Bitmap>(photoEditorView.width, photoEditorView.height) {
-                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                photoEditorView.source.setImageBitmap(resource)
-                            }
-                        })
-            }
+        photoEditorView.post {
+            Glide.with(photoEditorView.source).asBitmap().load(if (selectMedia.isCompressed)
+                selectMedia.compressPath else selectMedia.path)
+                    .into(object : SimpleTarget<Bitmap>(photoEditorView.width, photoEditorView.height) {
+                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                            photoEditorView.source.setImageBitmap(resource)
+                        }
+                    })
         }
     }
 
@@ -267,23 +302,49 @@ open class QuickImageActivity : BaseActivity(), View.OnClickListener, Properties
     }
 
 
-    private fun refrechTab(pos: Int) {
-        when (pos) {
-            0 -> {
-                bruch.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
-                box.setBackgroundColor(0)
-                font.setBackgroundColor(0)
-            }
-            1 -> {
-                bruch.setBackgroundColor(0)
-                font.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
-                box.setBackgroundColor(0)
-            }
-            2 -> {
-                bruch.setBackgroundColor(0)
-                font.setBackgroundColor(0)
-                box.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
-            }
+    private fun refrechTab(id: Int) {
+        if (id == bruch.id) {
+            bruch.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
+        } else {
+            bruch.setBackgroundColor(0)
         }
+        if (id == font.id) {
+            font.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
+        } else {
+            font.setBackgroundColor(0)
+        }
+
+        if (id == box.id) {
+            box.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
+        } else {
+            box.setBackgroundColor(0)
+        }
+
+        if (id == cutting.id) {
+            cutting.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark))
+        } else {
+            cutting.setBackgroundColor(0)
+        }
+    }
+
+    /**
+     * 保存裁剪之后的图片数据
+     */
+    protected fun setImageToView(data: Intent) {
+        val extras = data.extras
+        if (extras != null) {
+            val bitmap = extras.getParcelable<Bitmap>("data")
+            //这里图片是方形的，可以用一个工具类处理成圆形（很多头像都是圆形，这种工具类网上很多不再详述）
+            photoEditorView.source.setImageBitmap(bitmap)
+        }
+    }
+
+
+    private fun startCropImage(imagePath: String, width: Int, height: Int) {
+        cropFile = imagePath
+        UCrop.of(Uri.parse("file://" + imagePath), Uri.parse("file://" + imagePath))
+                .withAspectRatio(width.toFloat(), height.toFloat())
+                .withMaxResultSize(width, height)
+                .start(this)
     }
 }

@@ -6,7 +6,6 @@
     <item
         android:id="@+id/toolbar_save"
         android:iconTint="@color/white"
-        android:icon="@drawable/save"
-        android:title="Action"
+        android:title="保存"
         app:showAsAction="always"/>
 </menu>

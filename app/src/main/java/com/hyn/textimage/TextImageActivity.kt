@@ -30,6 +30,7 @@ class TextImageActivity : QuickImageActivity() {
         imgBgText.visibility = View.VISIBLE
         colorFragment = PropertiesBSFragment(true)
         imgBgText.setOnClickListener {
+            colorFragment.setCurrentColor(photoEditor.brushColor)
             colorFragment.show(supportFragmentManager, "bgColor")
             colorFragment.setPropertiesChangeListener(object : PropertiesBSFragment.Properties{
 

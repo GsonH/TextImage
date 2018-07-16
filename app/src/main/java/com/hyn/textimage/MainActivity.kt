@@ -29,9 +29,11 @@ class MainActivity : AppCompatActivity() {
         val mainItems = ArrayList<MainItem>()
         val itemQuick = MainItem(R.drawable.kuaisufan, "图片快速添加文字", ContextCompat.getColor(recyclerView.context, R.color.colorCard1))
         val itemText = MainItem(R.drawable.gird, "文字生成图片", ContextCompat.getColor(recyclerView.context, R.color.colorCard2))
+        val itemMine = MainItem(R.drawable.local_img, "我的图片", ContextCompat.getColor(recyclerView.context, R.color.colorCard4))
         val itemAbout = MainItem(R.drawable.about, "关于", ContextCompat.getColor(recyclerView.context, R.color.colorCard3))
         mainItems.add(itemQuick)
         mainItems.add(itemText)
+        mainItems.add(itemMine)
         mainItems.add(itemAbout)
         recyclerView.adapter = adapter
         adapter.setData(mainItems)
@@ -40,7 +42,8 @@ class MainActivity : AppCompatActivity() {
             when(pos) {
                 0 -> startActivity(QuickImageActivity.createIntent(recyclerView.context))
                 1 -> startActivity(TextImageActivity.createIntent(recyclerView.context))
-                2 -> startActivity(AboutActivity.createIntent(recyclerView.context))
+                2 -> startActivity(MineImageActivity.createIntent(recyclerView.context))
+                3 -> startActivity(AboutActivity.createIntent(recyclerView.context))
             }
         })
     }

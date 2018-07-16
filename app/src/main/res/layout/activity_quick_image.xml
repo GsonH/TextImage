@@ -98,5 +98,15 @@
             android:background="?android:attr/selectableItemBackground"
             android:src="@drawable/box"
             android:tint="@color/white" />
+
+        <ImageView
+            android:id="@+id/cutting"
+            android:padding="4dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?android:attr/selectableItemBackground"
+            android:src="@drawable/cut"
+            android:tint="@color/white" />
     </LinearLayout>
 </LinearLayout>

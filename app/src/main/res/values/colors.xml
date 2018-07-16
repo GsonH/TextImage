@@ -7,6 +7,7 @@
     <color name="colorCard1">#e74c3c</color>
     <color name="colorCard2">#2ecc71</color>
     <color name="colorCard3">@color/orange_color_picker</color>
+    <color name="colorCard4">#1E88E5</color>
     <color name="colorImageBg">#212121</color>
 
     <color name="black">#000000</color>
@@ -23,4 +24,7 @@
     <color name="yellow_green_color_picker">#C5E17A</color>
     <color name="tool_bg">#151414</color>
 
+    <color name="ucrop_color_statusbar">@color/colorPrimaryDark</color>
+    <color name="ucrop_color_toolbar">@color/colorPrimary</color>
+    <color name="ucrop_color_title">#fff</color>
 </resources>
