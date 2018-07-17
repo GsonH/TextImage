@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#e74c3c</color>
-    <color name="colorPrimaryDark">#c0392b</color>
-    <color name="colorAccent">#c0392b</color>
+    <color name="colorPrimary">#FB8C00</color>
+    <color name="colorPrimaryDark">#EF6C00</color>
+    <color name="colorAccent">#EF6C00</color>
+    <color name="colorPrimaryText">#263238</color>
 
     <color name="colorCard1">#e74c3c</color>
     <color name="colorCard2">#2ecc71</color>
     <color name="colorCard3">@color/orange_color_picker</color>
     <color name="colorCard4">#1E88E5</color>
-    <color name="colorImageBg">#212121</color>
+    <color name="colorImageBg">#caffffff</color>
 
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
@@ -27,4 +28,9 @@
     <color name="ucrop_color_statusbar">@color/colorPrimaryDark</color>
     <color name="ucrop_color_toolbar">@color/colorPrimary</color>
     <color name="ucrop_color_title">#fff</color>
+
+
+    <color name="bar_grey">@color/colorPrimary</color>
+    <color name="tab_color_true">@color/colorPrimaryDark</color>
+
 </resources>

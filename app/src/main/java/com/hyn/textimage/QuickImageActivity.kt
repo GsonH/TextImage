@@ -91,7 +91,7 @@ open class QuickImageActivity : BaseActivity(), View.OnClickListener, Properties
                 .circleDimmedLayer(true)// 是否圆形裁剪 true or false
                 .showCropFrame(true)// 是否显示裁剪矩形边框 圆形裁剪时建议设为false   true or false
                 .showCropGrid(true)// 是否显示裁剪矩形网格 圆形裁剪时建议设为false    true or false
-                .openClickSound(true)// 是否开启点击声音 true or false
+                .openClickSound(false)// 是否开启点击声音 true or false
 //                .selectionMedia(true)// 是否传入已选图片 List<LocalMedia> list
                 .previewEggs(true)// 预览图片时 是否增强左右滑动图片体验(图片滑动一半即可看到上一张是否选中) true or false
                 .cropCompressQuality(90)// 裁剪压缩质量 默认90 int
@@ -122,10 +122,12 @@ open class QuickImageActivity : BaseActivity(), View.OnClickListener, Properties
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.bruch -> {
-                photoEditor.setBrushDrawingMode(true)
-                propertyFragment.setCurrentColor(photoEditor.brushColor)
-                propertyFragment.show(supportFragmentManager, "bruch")
-                refrechTab(v.id)
+                if (!propertyFragment.isVisible) {
+                    photoEditor.setBrushDrawingMode(true)
+                    propertyFragment.setCurrentColor(photoEditor.brushColor)
+                    propertyFragment.show(supportFragmentManager, "bruch")
+                    refrechTab(v.id)
+                }
             }
             R.id.font -> {
                 val textEditorDialogFragment = TextEditorDialogFragment.show(this)
@@ -175,7 +177,7 @@ open class QuickImageActivity : BaseActivity(), View.OnClickListener, Properties
         builder.setMessage("确认保存图片？")//提示内容
         builder.setPositiveButton("确定") { dialog, which ->
             val childFile = File(ImageUtil.IMAGE_PATH, System.currentTimeMillis().toString() + ".png")
-            if(!childFile.exists()) {
+            if (!childFile.exists()) {
                 childFile.parentFile.mkdirs()
                 childFile.createNewFile()
             }
@@ -196,23 +198,6 @@ open class QuickImageActivity : BaseActivity(), View.OnClickListener, Properties
         }
         val dialog = builder.create()
         dialog.show()
-    }
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-        if (photoEditor.brushSize.toInt() == 0) {
-            val builder = AlertDialog.Builder(this)
-            builder.setMessage("图片未保存，确认退出？")//提示内容
-            builder.setPositiveButton("确定") { dialog, which ->
-                dialog.dismiss()
-                finish()
-            }
-            builder.setNegativeButton("取消") { dialog, which ->
-                dialog.cancel()
-            }
-            val dialog = builder.create()
-            dialog.show()
-        }
     }
 
 
@@ -259,11 +244,17 @@ open class QuickImageActivity : BaseActivity(), View.OnClickListener, Properties
             if (UCrop.REQUEST_CROP != requestCode) {
                 finish()
             } else {
-                cropFile?.let {
-                    val file = File(cropFile)
-                    if (file.exists()) {
-                        file.delete()
-                    }
+                if (!cropFile.isNullOrEmpty()) {
+                    Glide.with(photoEditorView.source).asBitmap().load(cropFile)
+                            .into(object : SimpleTarget<Bitmap>(photoEditorView.width, photoEditorView.height) {
+                                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                    photoEditorView.source.setImageBitmap(resource)
+                                    val file = File(cropFile)
+                                    if (file.exists()) {
+                                        file.delete()
+                                    }
+                                }
+                            })
                 }
             }
 
@@ -339,6 +330,25 @@ open class QuickImageActivity : BaseActivity(), View.OnClickListener, Properties
         }
     }
 
+
+    override fun finish() {
+        if (!photoEditor.isCacheEmpty) {
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage("图片未保存，确认退出？")//提示内容
+            builder.setPositiveButton("确定") { dialog, which ->
+                dialog.dismiss()
+                super.finish()
+            }
+            builder.setNegativeButton("取消") { dialog, which ->
+                dialog.cancel()
+            }
+            val dialog = builder.create()
+            dialog.show()
+        } else {
+            super.finish()
+        }
+
+    }
 
     private fun startCropImage(imagePath: String, width: Int, height: Int) {
         cropFile = imagePath

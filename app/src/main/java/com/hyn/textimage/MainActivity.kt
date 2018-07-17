@@ -8,8 +8,10 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import android.widget.Toast
 import com.hyn.textimage.adapter.MainAdapter
 import com.hyn.textimage.model.MainItem
+import com.jaeger.library.StatusBarUtil
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -20,11 +22,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        StatusBarUtil.setTranslucent(this)
         initView()
     }
 
     private fun initView() {
-        recyclerView.layoutManager = GridLayoutManager(recyclerView.context, 1)
+        recyclerView.layoutManager = GridLayoutManager(recyclerView.context, 2)
         adapter = MainAdapter()
         val mainItems = ArrayList<MainItem>()
         val itemQuick = MainItem(R.drawable.kuaisufan, "图片快速添加文字", ContextCompat.getColor(recyclerView.context, R.color.colorCard1))
@@ -49,4 +52,14 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    var backTime: Long = 0
+    override fun onBackPressed() {
+        val currnt = System.currentTimeMillis()
+        if(currnt - backTime > 2000) {
+            Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show()
+            backTime = currnt
+        } else {
+            super.onBackPressed()
+        }
+    }
 }

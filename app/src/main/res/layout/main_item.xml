@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="10dp"
+    android:layout_height="150dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginLeft="2dp"
+    android:layout_marginRight="2dp"
+    android:id="@+id/item_layout"
     android:foreground="?android:attr/selectableItemBackground"
-    android:padding="10dp">
+    >
 
     <ImageView
+        android:layout_marginTop="5dp"
         android:id="@+id/item_icon"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_centerHorizontal="true"
-        android:tint="@color/white" />
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_centerInParent="true"
+        android:tint="@color/colorPrimaryText" />
 
     <TextView
         android:id="@+id/item_text"
@@ -20,6 +24,6 @@
         android:layout_below="@id/item_icon"
         android:layout_centerHorizontal="true"
         android:layout_margin="5dp"
-        android:textColor="@color/white"
+        android:textColor="@color/colorPrimaryText"
         android:textSize="18sp" />
 </RelativeLayout>

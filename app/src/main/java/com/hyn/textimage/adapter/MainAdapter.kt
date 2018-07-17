@@ -1,5 +1,6 @@
 package com.hyn.textimage.adapter
 
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -32,13 +33,15 @@ class MainAdapter : RecyclerView.Adapter<ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val itemLayout = holder.itemView.findView<View>(R.id.item_layout)
         val itemText = holder.itemView.findView<TextView>(R.id.item_text)
         val itemIcon = holder.itemView.findView<ImageView>(R.id.item_icon)
         holder.itemView.setOnClickListener {
             onCLick?.onClick(it)
         }
         val item = items!![position]
-        holder.itemView.setBackgroundColor(item.bg)
+        itemLayout.setBackgroundColor(ContextCompat.getColor(holder.convertView.context,
+                R.color.colorImageBg))
         itemText.text = item.name
         Glide.with(itemIcon).load(item.icon).into(itemIcon)
         holder.itemView.setTag(R.integer.pos, position)
