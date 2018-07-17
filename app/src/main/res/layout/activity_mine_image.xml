@@ -16,10 +16,26 @@
         app:theme="@style/AppTheme.ToolBar">
 
     </android.support.v7.widget.Toolbar>
+    <TextView
+        android:id="@+id/image_tip"
+        android:textSize="16sp"
+        android:textColor="@color/color_4d"
+        android:gravity="center_vertical"
+        android:background="@color/yellow_color_picker"
+        android:layout_width="match_parent"
+        android:layout_height="40dp" />
 
-
+    <TextView
+        android:id="@+id/no_image_tip"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:textColor="@color/color_4d"
+        android:text="暂无编辑完成的照片哦~"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/image_list"
+        android:overScrollMode="never"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

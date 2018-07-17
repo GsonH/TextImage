@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/black"
+    android:orientation="vertical"
     tools:context=".QuickImageActivity">
 
     <android.support.v7.widget.Toolbar
@@ -39,7 +39,7 @@
 
         <ImageView
             android:id="@+id/imgRedo"
-            android:layout_width="50dp"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_toRightOf="@id/imgUndo"
@@ -50,15 +50,14 @@
         <TextView
             android:id="@+id/imgBg"
             android:layout_width="wrap_content"
-            android:text="设置图片背景"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
             android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
             android:background="?android:attr/selectableItemBackground"
             android:padding="8dp"
+            android:text="设置图片背景"
             android:textColor="@color/white"
-            android:visibility="gone"
-             />
+            android:visibility="gone" />
 
 
     </RelativeLayout>
@@ -69,44 +68,107 @@
         android:layout_height="50dp"
         android:orientation="horizontal">
 
-        <ImageView
+        <LinearLayout
             android:id="@+id/bruch"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:padding="4dp"
             android:background="?android:attr/selectableItemBackground"
-            android:src="@drawable/brush"
-            android:tint="@color/white" />
+            android:orientation="vertical">
 
-        <ImageView
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:padding="4dp"
+                android:src="@drawable/brush"
+                android:tint="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="画笔"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/font"
             android:layout_width="0dp"
-            android:padding="4dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
-            android:src="@drawable/font_colors"
-            android:tint="@color/white" />
+            android:orientation="vertical">
 
-        <ImageView
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:padding="4dp"
+                android:src="@drawable/font_colors"
+                android:tint="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="文字"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/box"
-            android:padding="4dp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
-            android:src="@drawable/box"
-            android:tint="@color/white" />
+            android:orientation="vertical">
 
-        <ImageView
+            <ImageView
+
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:padding="4dp"
+                android:src="@drawable/box"
+                android:tint="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="橡皮檫"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/cutting"
-            android:padding="4dp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
-            android:src="@drawable/cut"
-            android:tint="@color/white" />
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1"
+                android:padding="4dp"
+                android:src="@drawable/cut"
+                android:tint="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="裁剪"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+        </LinearLayout>
+
     </LinearLayout>
 </LinearLayout>

@@ -1,0 +1,14 @@
+.gradle/
+/local.properties
+.idea/
+.DS_Store
+build/
+captures/
+*.class
+*.iml
+*.pyc
+gradle/local.properties
+LibBiliApi/src/main/jniLibs
+libvideoplayer/src/main/jniLibs
+node_modules/
+/freeline*

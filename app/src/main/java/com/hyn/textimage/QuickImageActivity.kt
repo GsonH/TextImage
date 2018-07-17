@@ -44,9 +44,9 @@ open class QuickImageActivity : BaseActivity(), View.OnClickListener, Properties
 
     var cropFile: String? = null
     val editLayout: LinearLayout by lazy { findViewById<LinearLayout>(R.id.edit_layout) }
-    val bruch: ImageView by lazy { findViewById<ImageView>(R.id.bruch) }
-    val box: ImageView by lazy { findViewById<ImageView>(R.id.box) }
-    val font: ImageView by lazy { findViewById<ImageView>(R.id.font) }
+    val bruch: LinearLayout by lazy { findViewById<LinearLayout>(R.id.bruch) }
+    val box: LinearLayout by lazy { findViewById<LinearLayout>(R.id.box) }
+    val font: LinearLayout by lazy { findViewById<LinearLayout>(R.id.font) }
     val imgUndo: ImageView by lazy { findViewById<ImageView>(R.id.imgUndo) }
     val imgRedo: ImageView by lazy { findViewById<ImageView>(R.id.imgRedo) }
     val photoEditorView: PhotoEditorView by lazy { findViewById<PhotoEditorView>(R.id.photoEditorView) }
